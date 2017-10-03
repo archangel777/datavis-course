@@ -13,13 +13,13 @@
 <body>
      <div>
         <h1>Gross by Year</h1>
-        <div id="chart1"></div>
-        <h1>Gross by Year</h1>
-        <div id="chart2"></div>
+        <div id="chart1" style="width: 100%"></div>
+        <h1>Gross by Genre</h1>
+        <div id="chart2" style="width: 100%"></div>
     </div>
 	<script type="text/javascript">
         var barChart1 = dc.barChart('#chart1');
-        //var barChart2 = dc.barChart('#chart2');
+        var barChart2 = dc.barChart('#chart2');
 
 		d3.json("data/movies.json", function(data) {
 
@@ -34,9 +34,15 @@
                 return d["Year"];
             });
 
-            console.log(data[0]["Worldwide_Gross_M"])
-
             var grossByYear = yearDim.group().reduceSum(function(d){
+                return d["Worldwide_Gross_M"];
+            });
+
+            var genreDim = facts.dimension(function(d) {
+                return d["Genre"];
+            });
+
+            var grossByGenre = genreDim.group().reduceSum(function(d) {
                 return d["Worldwide_Gross_M"];
             });
 
@@ -44,11 +50,26 @@
                      .height(400)
                      .margins({top: 50, right: 50, bottom: 25, left: 40})
                      .dimension(yearDim)
-                     .x(d3.scale.linear().domain([2006, 2013]))
+                     .x(d3.scale.ordinal())
+                     .xUnits(dc.units.ordinal)
                      .renderHorizontalGridLines(true)
                      .legend(dc.legend().x(700).y(5).itemHeight(13).gap(5))
                      .brushOn(false)    
                      .group(grossByYear, 'Gross')
+
+            barChart2.width(800)
+                     .height(400)
+                     .margins({top: 50, right: 50, bottom: 25, left: 40})
+                     .dimension(genreDim)
+                     .x(d3.scale.ordinal())
+                     .xUnits(dc.units.ordinal)
+                     .renderHorizontalGridLines(true)
+                     .legend(dc.legend().x(700).y(5).itemHeight(13).gap(5))
+                     .brushOn(false)    
+                     .group(grossByGenre, 'Gross')
+                     .ordering(function(d) {
+                        return -d["Worldwide_Gross_M"];
+                     })
 
             dc.renderAll();
 
