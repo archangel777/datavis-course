@@ -16,7 +16,19 @@ h2 span {
     font-weight:normal;
 }
 
+.crime {
+	display: inline-block;
+}
+
 #mapid {
+    width: 100px;
+    height: 450px;
+}
+
+#mapid2 {
     width: 650px;
     height: 450px;
+}
+
+#bar-chart {
 }
